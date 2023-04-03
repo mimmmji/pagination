@@ -1,4 +1,5 @@
 import React from 'react';
+import { create } from 'zustand';
 
 type PaginationState = {
   totalItems: number;
@@ -22,7 +23,7 @@ export const usePaginationContext = create<{
   setPagination: (pg: Pagination) => void;
   setNextPage: () => void;
   setFirstPage: () => void;
-}>((set, get) => ({
+}>((set, /*get*/) => ({
   pagination: {
     totalPages: 0,
     pageSize: 0,
@@ -31,10 +32,62 @@ export const usePaginationContext = create<{
     previousEnabled: false,
     totalItems: 0,
   },
-  setPagination: (args: PaginationArgs) => {},
-  setNextPage: () => {},
-  setPrevPage: () => {},
-  setFirstPage: () => {},
+  setPagination: (args: PaginationArgs) => 
+    set((state) => {
+      const totalPages = Math.ceil(args.totalItems / args.pageSize);
+      const nextEnabled = state.pagination.currentPage < totalPages;
+      return {
+        pagination:{
+          ...state.pagination,
+          ...args,
+          totalPages,
+          nextEnabled
+        }
+      }
+    }),
+  setNextPage: () => 
+    set((state) => {
+      const {currentPage, totalPages} = state.pagination;
+      const nextPage = currentPage + 1;
+      const nextEnabled = nextPage < totalPages;
+      const previousEnabled =nextPage > 1;
+      return {
+        pagination:{
+          ...state.pagination,
+          currentPage: nextPage,
+          nextEnabled,
+          previousEnabled
+        }
+      }
+    }),
+  setPrevPage: () => 
+    set((state)=>{
+      const {currentPage, totalPages} = state.pagination;
+      const prevPage = currentPage - 1;
+      const nextEnabled = totalPages > prevPage;
+      const previousEnabled = prevPage > 1;
+      return {
+        pagination: {
+          ...state.pagination,
+          currentPage: prevPage,
+          previousEnabled,
+          nextEnabled
+        }
+      }
+    }),
+  setFirstPage: () => 
+    set((state) => {
+      const {totalPages} = state.pagination;
+      const nextEnabled = totalPages >1;
+      return {
+        pagination: {
+          ...state.pagination,
+          currentPage:1,
+          nextEnabled,
+          previousEnabled:false,
+        }
+      }
+    })
 }));
 
 export interface ListContextProps {
@@ -51,10 +104,15 @@ const ListPaginationContextProvider: FCC<{ value: ListPaginationContextProps }> 
     setPagination({
       pageSize: value.perPage,
       totalItems: value.total,
+      currentPage: INITIAL_PAGE,
+      nextEnabled: false,
+      previousEnabled: false,
+      totalPages: 0
     });
-  }, [value]);
+  }, [value, setPagination]);
 
-  return <>{children}</>;
+  return (<>{children}</>);
 };
+
 
 export default ListPaginationContextProvider;

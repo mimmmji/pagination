@@ -4,7 +4,7 @@ import { screen, render, fireEvent } from '@testing-library/react';
 import ListPaginationContextProvider, { usePaginationContext } from './list-pagination-context-provider';
 
 describe('ListPaginationContextProvider', () => {
-  const NaiveList = (props) => {
+  const NaiveList = () => {
     const { pagination, setNextPage } = usePaginationContext();
     return (
       <div>
@@ -16,7 +16,7 @@ describe('ListPaginationContextProvider', () => {
     );
   };
 
-  it.skip('should return currentPage, totalPages, pageSize and view more button', () => {
+  it('should return currentPage, totalPages, pageSize and view more button', () => {
     const { getByText } = render(
       <ListPaginationContextProvider
         value={{
@@ -28,13 +28,13 @@ describe('ListPaginationContextProvider', () => {
       </ListPaginationContextProvider>,
     );
 
-    expect(getByText('currentPage: 0')).not.toBeNull();
+    expect(getByText('currentPage: 1')).not.toBeNull();
     expect(getByText('totalPages: 2')).not.toBeNull();
     expect(getByText('pageSize: 2')).not.toBeNull();
     expect(getByText('view more')).not.toBeNull();
   });
 
-  it.skip('should return currentPage, totalPages, pageSize and view more button', () => {
+  it('should return currentPage, totalPages, pageSize and view more button', () => {
     const { getByText } = render(
       <ListPaginationContextProvider
         value={{
@@ -48,7 +48,7 @@ describe('ListPaginationContextProvider', () => {
 
     fireEvent.click(getByText('view more'));
 
-    expect(getByText('currentPage: 1')).not.toBeNull();
+    expect(getByText('currentPage: 2')).not.toBeNull();
     expect(getByText('totalPages: 2')).not.toBeNull();
     expect(getByText('pageSize: 2')).not.toBeNull();
     expect(screen.queryByText('view more')).toBeNull();
