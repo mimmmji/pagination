@@ -5,13 +5,15 @@ import ListPaginationContextProvider, { usePaginationContext } from './list-pagi
 
 describe('ListPaginationContextProvider', () => {
   const NaiveList = () => {
-    const { pagination, setNextPage } = usePaginationContext();
+    const { pagination, setNextPage, setFirstPage, setPrevPage } = usePaginationContext();
     return (
       <div>
         <span>{`currentPage: ${pagination.currentPage}`}</span>
         <span>{`totalPages: ${pagination.totalPages}`}</span>
         <span>{`pageSize: ${pagination.pageSize}`}</span>
+        <button onClick={setFirstPage}>go to first page</button>
         {pagination.nextEnabled && <button onClick={setNextPage}>view more</button>}
+        {pagination.previousEnabled && <button onClick={setPrevPage}>Go to previous page</button>}
       </div>
     );
   };
@@ -53,4 +55,38 @@ describe('ListPaginationContextProvider', () => {
     expect(getByText('pageSize: 2')).not.toBeNull();
     expect(screen.queryByText('view more')).toBeNull();
   });
+
+  test.skip('setFirstPage');
+  test.skip('setPrevPage');
+  test.skip('negative values');
+  test.skip('zero values');
+  test.skip('첫번째 페이지에서 이전 버튼을 누르면 이전 페이지로 이동 불가');
+  test.skip('첫번째 페이지에서 다음 버튼을 누르면 다음 페이지로 이동');
+  test.skip('첫번째와 마지막 페이지 사이의 위치에 있으면 이전, 다음으로 이동 가능');
+  test.skip('마지막 페이지에서는 다음 페이지 누르면 다음 페이지로 이동 불가', () => {
+    const List = () => {
+      const { pagination, setNextPage, setFirstPage, setPrevPage } = usePaginationContext();
+      return (
+        <div>
+          <span>{`currentPage: ${pagination.currentPage}`}</span>
+          <span>{`totalPages: ${pagination.totalPages}`}</span>
+          <span>{`pageSize: ${pagination.pageSize}`}</span>
+          <button onClick={setFirstPage}>go to first page</button>
+          <button onClick={setNextPage}>view more</button>
+        </div>
+      );
+    };
+
+    render(
+      <ListPaginationContextProvider
+        value={{
+          total: 4,
+          perPage: 2,
+        }}
+      >
+        <List />
+      </ListPaginationContextProvider>,
+    );
+  });
+  test.skip('마지막 페이지에서는 이전 페이지 누르면 이전 페이지로 이동');
 });
