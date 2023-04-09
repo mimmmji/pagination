@@ -23,6 +23,7 @@ export const usePaginationContext = create<{
   setPagination: (pg: PaginationArgs) => void;
   setNextPage: () => void;
   setFirstPage: () => void;
+  setPrevPage: () => void;
 }>((set /*get*/) => ({
   pagination: {
     totalPages: 0,
@@ -50,6 +51,11 @@ export const usePaginationContext = create<{
     set((state) => {
       const { currentPage, totalPages } = state.pagination;
       const nextPage = currentPage + 1;
+
+      if (nextPage > totalPages) {
+        return state;
+      }
+  
       const nextEnabled = nextPage < totalPages;
       const previousEnabled = nextPage > 1;
 
@@ -66,6 +72,11 @@ export const usePaginationContext = create<{
     set((state) => {
       const { currentPage, totalPages } = state.pagination;
       const prevPage = currentPage - 1;
+
+      if (prevPage < 1) {
+        return state;
+      }
+  
       const nextEnabled = totalPages > prevPage;
       const previousEnabled = prevPage > 1;
 
