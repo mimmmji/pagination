@@ -23,6 +23,7 @@ export const usePaginationContext = create<{
   setPagination: (pg: PaginationArgs) => void;
   setNextPage: () => void;
   setFirstPage: () => void;
+  setPrevPage: () => void;
 }>((set /*get*/) => ({
   pagination: {
     totalPages: 0,
@@ -34,13 +35,20 @@ export const usePaginationContext = create<{
   },
   setPagination: (args: PaginationArgs) =>
     set((state) => {
-      const totalPages = Math.ceil(args.totalItems / args.pageSize);
+      const { totalItems, pageSize } = args;
+
+      const validatedTotalItems = Math.max(totalItems, 1);
+      const validatedPageSize = Math.max(pageSize, 1);
+
+      const totalPages = Math.ceil(validatedTotalItems / validatedPageSize);
       const nextEnabled = state.pagination.currentPage < totalPages;
 
       return {
         pagination: {
           ...state.pagination,
           ...args,
+          totalItems: validatedTotalItems,
+          pageSize: validatedPageSize,
           totalPages,
           nextEnabled,
         },
@@ -50,6 +58,11 @@ export const usePaginationContext = create<{
     set((state) => {
       const { currentPage, totalPages } = state.pagination;
       const nextPage = currentPage + 1;
+
+      if (nextPage > totalPages) {
+        return state;
+      }
+
       const nextEnabled = nextPage < totalPages;
       const previousEnabled = nextPage > 1;
 
@@ -66,6 +79,11 @@ export const usePaginationContext = create<{
     set((state) => {
       const { currentPage, totalPages } = state.pagination;
       const prevPage = currentPage - 1;
+
+      if (prevPage < 1) {
+        return state;
+      }
+
       const nextEnabled = totalPages > prevPage;
       const previousEnabled = prevPage > 1;
 
