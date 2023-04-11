@@ -4,7 +4,6 @@ import { screen, render, fireEvent } from '@testing-library/react';
 import ListPaginationContextProvider, { usePaginationContext } from './list-pagination-context-provider';
 import NaiveList from 'NaiveList';
 
-
 describe('ListPaginationContextProvider', () => {
   const NaiveList = () => {
     const { pagination, setNextPage, setFirstPage, setPrevPage } = usePaginationContext();
@@ -19,8 +18,6 @@ describe('ListPaginationContextProvider', () => {
       </div>
     );
   };
-  
-  
 
   it('should return currentPage, totalPages, pageSize and view more button', () => {
     const { getByText } = render(
@@ -89,14 +86,14 @@ describe('ListPaginationContextProvider', () => {
       >
         <NaiveList />
       </ListPaginationContextProvider>,
-      );
-      
-      fireEvent.click(getByText('view more'));  
-      fireEvent.click(getByText('view more'));
-      
-      fireEvent.click(getByText('Go to previous page'));
+    );
 
-      expect(getByText('currentPage: 2')).not.toBeNull();
+    fireEvent.click(getByText('view more'));
+    fireEvent.click(getByText('view more'));
+
+    fireEvent.click(getByText('Go to previous page'));
+
+    expect(getByText('currentPage: 2')).not.toBeNull();
   });
 
   test('negative values, zero values', () => {
@@ -113,8 +110,8 @@ describe('ListPaginationContextProvider', () => {
 
     fireEvent.click(getByText('Go to previous page'));
 
-    const currentPage = parseInt(screen.getByText(/currentPage:/)!.textContent!.split(":")[1]);
-    
+    const currentPage = parseInt(screen.getByText(/currentPage:/)!.textContent!.split(':')[1]);
+
     expect(currentPage).toBeGreaterThanOrEqual(1);
   });
 
@@ -150,69 +147,66 @@ describe('ListPaginationContextProvider', () => {
     fireEvent.click(getByText('Go to previous page'));
     expect(queryByText('currentPage: 0')).toBeNull();
     expect(getByText('currentPage: 1')).not.toBeNull();
-    });
   });
-  
-  
+});
 
-  test('첫번째 페이지에서 다음 버튼을 누르면 다음 페이지로 이동', async () => {
-    const { getByText } = render(
-      <ListPaginationContextProvider
-        value={{
-          total: 6,
-          perPage: 2,
-        }}
-      >
-        <NaiveList />
-      </ListPaginationContextProvider>,
-    );
+test('첫번째 페이지에서 다음 버튼을 누르면 다음 페이지로 이동', async () => {
+  const { getByText } = render(
+    <ListPaginationContextProvider
+      value={{
+        total: 6,
+        perPage: 2,
+      }}
+    >
+      <NaiveList />
+    </ListPaginationContextProvider>,
+  );
 
-    expect(getByText('currentPage: 1')).not.toBeNull();
-    expect(getByText('totalPages: 3')).not.toBeNull();
-  
-    fireEvent.click(getByText('view more'));
-  
-    expect(getByText('currentPage: 2')).not.toBeNull();
-    expect(getByText('totalPages: 3')).not.toBeNull();
-  });
-  
-  test('첫번째와 마지막 페이지 사이의 위치에 있으면 이전, 다음으로 이동 가능', async () => {
-    const { getByText } = render(
-      <ListPaginationContextProvider
-        value={{
-          total: 6,
-          perPage: 2,
-        }}
-      >
-        <NaiveList />
-      </ListPaginationContextProvider>,
-    );
+  expect(getByText('currentPage: 1')).not.toBeNull();
+  expect(getByText('totalPages: 3')).not.toBeNull();
 
-    fireEvent.click(getByText('view more'));
-    fireEvent.click(getByText('view more'));
-    expect(getByText('currentPage: 3')).not.toBeNull(); 
+  fireEvent.click(getByText('view more'));
 
-    fireEvent.click(getByText('Go to previous page'));
-    expect(getByText('currentPage: 2')).not.toBeNull(); 
-  });
-    
+  expect(getByText('currentPage: 2')).not.toBeNull();
+  expect(getByText('totalPages: 3')).not.toBeNull();
+});
 
-  test('마지막 페이지에서는 다음 페이지 누르면 다음 페이지로 이동 불가', () => {
-    const { getByText } = render(
-      <ListPaginationContextProvider
-        value={{
-          total: 4,
-          perPage: 2,
-        }}
-      >
-        <NaiveList />
-      </ListPaginationContextProvider>,
-    );
+test('첫번째와 마지막 페이지 사이의 위치에 있으면 이전, 다음으로 이동 가능', async () => {
+  const { getByText } = render(
+    <ListPaginationContextProvider
+      value={{
+        total: 6,
+        perPage: 2,
+      }}
+    >
+      <NaiveList />
+    </ListPaginationContextProvider>,
+  );
 
-    fireEvent.click(getByText('view more'));
-    fireEvent.click(getByText('view more'));
-    expect(getByText('view more').hasAttribute('disabled')).toBeTruthy();
-  });
+  fireEvent.click(getByText('view more'));
+  fireEvent.click(getByText('view more'));
+  expect(getByText('currentPage: 3')).not.toBeNull();
+
+  fireEvent.click(getByText('Go to previous page'));
+  expect(getByText('currentPage: 2')).not.toBeNull();
+});
+
+test('마지막 페이지에서는 다음 페이지 누르면 다음 페이지로 이동 불가', () => {
+  const { getByText } = render(
+    <ListPaginationContextProvider
+      value={{
+        total: 4,
+        perPage: 2,
+      }}
+    >
+      <NaiveList />
+    </ListPaginationContextProvider>,
+  );
+
+  fireEvent.click(getByText('view more'));
+  fireEvent.click(getByText('view more'));
+  expect(getByText('view more').hasAttribute('disabled')).toBeTruthy();
+});
 
 test('마지막 페이지에서는 이전 페이지 누르면 이전 페이지로 이동', async () => {
   const { getByText } = render(
@@ -226,7 +220,6 @@ test('마지막 페이지에서는 이전 페이지 누르면 이전 페이지�
     </ListPaginationContextProvider>,
   );
 
-
   fireEvent.click(getByText('view more'));
   fireEvent.click(getByText('view more'));
   expect(getByText('currentPage: 3')).not.toBeNull();
@@ -236,3 +229,34 @@ test('마지막 페이지에서는 이전 페이지 누르면 이전 페이지�
   expect(getByText('totalPages: 3')).not.toBeNull();
 });
 
+test('total 값이 음수 값일 때 ', async () => {
+  const { getByText } = render(
+    <ListPaginationContextProvider
+      value={{
+        total: -6,
+        perPage: 2,
+      }}
+    >
+      <NaiveList />
+    </ListPaginationContextProvider>,
+  );
+
+  expect(usePaginationContext.getState().pagination.totalItems).toEqual(1);
+  expect(getByText('totalPages: 1')).not.toBeNull();
+});
+
+test('perPage 값이 음수 값일 때', async () => {
+  const { getByText } = render(
+    <ListPaginationContextProvider
+      value={{
+        total: 6,
+        perPage: -2,
+      }}
+    >
+      <NaiveList />
+    </ListPaginationContextProvider>,
+  );
+
+  expect(usePaginationContext.getState().pagination.pageSize).toEqual(1);
+  expect(getByText('totalPages: 6')).not.toBeNull();
+});
