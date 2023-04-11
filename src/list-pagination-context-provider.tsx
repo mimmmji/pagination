@@ -17,6 +17,14 @@ type Pagination = PaginationState & PaginationMeta;
 type PaginationArgs = Pick<PaginationState, 'totalItems' | 'pageSize'>;
 
 const INITIAL_PAGE = 1;
+const INITIAL_PAGINATION: Pagination = {
+  totalPages: 0,
+  pageSize: 0,
+  currentPage: INITIAL_PAGE,
+  nextEnabled: false,
+  previousEnabled: false,
+  totalItems: 0,
+};
 
 export const usePaginationContext = create<{
   pagination: Pagination;
@@ -25,14 +33,7 @@ export const usePaginationContext = create<{
   setFirstPage: () => void;
   setPrevPage: () => void;
 }>((set /*get*/) => ({
-  pagination: {
-    totalPages: 0,
-    pageSize: 0,
-    currentPage: INITIAL_PAGE,
-    nextEnabled: false,
-    previousEnabled: false,
-    totalItems: 0,
-  },
+  pagination: INITIAL_PAGINATION,
   setPagination: (args: PaginationArgs) =>
     set((state) => {
       const { totalItems, pageSize } = args;
@@ -45,7 +46,7 @@ export const usePaginationContext = create<{
 
       return {
         pagination: {
-          ...state.pagination,
+          ...INITIAL_PAGINATION,
           ...args,
           totalItems: validatedTotalItems,
           pageSize: validatedPageSize,
